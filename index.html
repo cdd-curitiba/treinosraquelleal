@@ -177,6 +177,14 @@ img{display:block;max-width:100%;}
 .mtags span{font-size:12px;color:var(--gray);background:#111;border:1px solid var(--line);border-radius:8px;padding:5px 10px;}
 .mnotes{padding:14px 16px 18px;font-size:13.5px;color:var(--gray);line-height:1.6;}
 .mclose{display:block;width:calc(100% - 32px);margin:0 16px;padding:14px;border-radius:14px;border:1px solid var(--line);background:none;color:var(--white);font-size:14px;font-weight:600;cursor:pointer;text-align:center;}
+.ex-gif{width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:12px;background:#111;display:block;}
+.ex-gif-wrap{padding:0 16px 4px;position:relative;}
+.ex-gif-wrap .loading-gif{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#111;border-radius:12px;color:var(--gray);font-size:13px;gap:10px;}
+.muscles-row{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 4px;}
+.muscle-tag{background:rgba(241,90,36,.12);border:1px solid rgba(241,90,36,.35);color:var(--or2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:5px 10px;border-radius:8px;}
+.muscle-tag.sec{background:#111;border-color:var(--line);color:var(--gray);}
+.equip-tag{background:#111;border:1px solid var(--line);color:var(--gray);font-size:11px;padding:5px 10px;border-radius:8px;}
+.no-gif{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:4/3;background:#111;border-radius:12px;color:var(--gray);font-size:13px;gap:8px;margin:0 16px 4px;}
 </style>
 </head>
 <body>
@@ -574,33 +582,74 @@ function workout(){
     </button></div>`;
 }
 
-function abrir(i){
+const RAPIDAPI_KEY = "14b43d5f50msh8e57efad88ed2e7p1fd826jsn422c249ae98e";
+const exCache = {};
+
+async function abrir(i){
   const e = stuAtual.treinos[selDia].ex[i];
   if(!prog[selDia]||typeof prog[selDia]!=='object') prog[selDia]={};
   prog[selDia][i]=true;
-  const vidId = e.v ? (e.v.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/)||[])[1] : '';
-  const vidUrl = vidId ? 'https://www.youtube.com/watch?v='+vidId : ('https://www.youtube.com/results?search_query='+encodeURIComponent(e.n+' execução correta academia')+'%20%23shorts');
   document.getElementById('mn').textContent=e.n;
   document.getElementById('ms').textContent=e.s+' séries';
   document.getElementById('mr').textContent=e.r+' reps';
   document.getElementById('md').textContent=e.d+' descanso';
   document.getElementById('mnt').textContent=e.obs||'';
-  document.getElementById('vf').innerHTML=vidId
-    ? `<div onclick="window.open('${vidUrl}','_blank')" style="cursor:pointer;position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;">
-        <img src="https://img.youtube.com/vi/${vidId}/hqdefault.jpg" style="width:100%;height:100%;object-fit:cover;display:block">
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3)">
-          <div style="width:60px;height:60px;background:rgba(241,90,36,.92);border-radius:50%;display:flex;align-items:center;justify-content:center">
-            <svg viewBox="0 0 24 24" style="width:26px;height:26px;fill:#fff;margin-left:3px"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-        </div>
-        <div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px">Abrir no YouTube ↗</div>
-      </div>`
-    : `<div onclick="window.open('${vidUrl}','_blank')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;height:120px;border-radius:12px;background:#111;gap:10px;color:#f15a24;font-size:14px;font-weight:700;border:1px dashed #333">
-        <svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:#f15a24"><path d="M21.6 7.2c-.25-.93-.98-1.66-1.91-1.91C17.99 5 12 5 12 5s-5.99 0-7.69.29c-.93.25-1.66.98-1.91 1.91C2.1 8.9 2.1 12 2.1 12s0 3.1.3 4.8c.25.93.98 1.66 1.91 1.91C5.91 19 12 19 12 19s5.99 0 7.69-.29c.93-.25 1.66-.98 1.91-1.91C21.9 15.1 21.9 12 21.9 12s0-3.1-.3-4.8zM10 15V9l5 3-5 3z"/></svg>
-        Buscar no YouTube Shorts ↗
-      </div>`;
+  document.getElementById('vf').innerHTML='<div class="ex-gif-wrap"><div class="loading-gif"><div class="spinner"></div> Carregando...</div></div>';
   document.getElementById('ov').classList.add('on');
   workout(); strip();
+  // fetch ExerciseDB
+  try{
+    const nome = e.n.toLowerCase().trim();
+    let exData = exCache[nome];
+    if(!exData){
+      // translate common names to english for search
+      const translations = {
+        'agachamento':'squat','agachamento livre':'barbell squat','agachamento smith':'smith machine squat',
+        'leg press':'leg press','cadeira extensora':'leg extension','mesa flexora':'lying leg curl',
+        'cadeira flexora':'seated leg curl','cadeira abdutora':'hip abduction','cadeira adutora':'hip adduction',
+        'stiff':'romanian deadlift','elevação pélvica':'hip thrust','afundo':'lunge',
+        'panturrilha':'calf raise','supino reto':'bench press','supino inclinado':'incline bench press',
+        'supino':'bench press','crucifixo':'cable fly','crossover':'cable crossover',
+        'puxada':'lat pulldown','remada curvada':'bent over row','remada sentada':'seated row',
+        'remada unilateral':'one arm row','pullover':'pullover','desenvolvimento':'shoulder press',
+        'elevação lateral':'lateral raise','elevação frontal':'front raise','rosca direta':'barbell curl',
+        'rosca alternada':'dumbbell alternate curl','rosca scott':'preacher curl','rosca martelo':'hammer curl',
+        'tríceps corda':'cable triceps pushdown','tríceps testa':'triceps skull crusher',
+        'abdominal':'crunch','prancha':'plank','burpee':'burpee','hiperextensão':'hyperextension',
+        'desenvolvimento com halteres':'dumbbell shoulder press','desenvolvimento com barra':'barbell overhead press',
+      };
+      let searchTerm = nome;
+      for(const [pt,en] of Object.entries(translations)){
+        if(nome.includes(pt)){ searchTerm=en; break; }
+      }
+      const url = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(searchTerm)}?limit=1&offset=0`;
+      const res = await fetch(url, {
+        headers: {'x-rapidapi-key':RAPIDAPI_KEY,'x-rapidapi-host':'exercisedb.p.rapidapi.com'}
+      });
+      const data = await res.json();
+      exData = data && data.length ? data[0] : null;
+      if(exData) exCache[nome]=exData;
+    }
+    if(exData){
+      const muscles = [exData.target,...(exData.secondaryMuscles||[]).slice(0,2)];
+      const musclesPT = muscles.map(m=>m.replace('glutes','glúteos').replace('quadriceps','quadríceps')
+        .replace('hamstrings','posterior').replace('abductors','abdutores').replace('adductors','adutores')
+        .replace('calves','panturrilha').replace('pectorals','peitoral').replace('lats','dorsal')
+        .replace('traps','trapézio').replace('biceps','bíceps').replace('triceps','tríceps')
+        .replace('delts','deltóide').replace('abs','abdômen').replace('spine','lombar')
+        .replace('forearms','antebraço').replace('upper back','costas').replace('lower back','lombar'));
+      document.getElementById('vf').innerHTML=`
+        <div class="ex-gif-wrap"><img class="ex-gif" src="${exData.gifUrl}" alt="${e.n}"></div>
+        <div class="muscles-row">
+          ${musclesPT.map((m,idx)=>`<span class="muscle-tag ${idx>0?'sec':''}">${idx===0?'🎯 ':''}${m}</span>`).join('')}
+          <span class="equip-tag">🏋️ ${exData.equipment}</span>
+        </div>`;
+    } else {
+      document.getElementById('vf').innerHTML=`<div class="no-gif"><svg viewBox="0 0 24 24" style="width:36px;height:36px;fill:var(--orange);opacity:.6"><path d="M13 2.05V4.05C17.39 4.59 20.5 8.58 19.96 12.97C19.5 16.61 16.64 19.5 13 19.93V21.93C18.5 21.38 22.5 16.5 21.95 11C21.5 6.25 17.73 2.5 13 2.05M11 2.06C9.05 2.25 7.19 3 5.67 4.26L7.1 5.74C8.22 4.84 9.57 4.26 11 4.06V2.06M4.26 5.67C3 7.19 2.25 9.04 2.05 11H4.05C4.24 9.58 4.8 8.23 5.69 7.1L4.26 5.67M2.06 13C2.26 14.96 3.03 16.81 4.27 18.33L5.69 16.9C4.81 15.77 4.24 14.42 4.06 13H2.06M7.1 18.37L5.67 19.74C7.18 21 9.04 21.79 11 22V20C9.58 19.82 8.23 19.25 7.1 18.37M12 7L8 11H11V16H13V11H16L12 7Z"/></svg>Sem demonstração disponível</div>`;
+    }
+  } catch(err){
+    document.getElementById('vf').innerHTML=`<div class="no-gif" style="color:#e55">Erro ao carregar demonstração</div>`;
+  }
 }
 
 function fechar(){ document.getElementById('ov').classList.remove('on'); }
