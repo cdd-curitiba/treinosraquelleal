@@ -73,6 +73,8 @@ img{display:block;max-width:100%;}
 .stu-btns button{flex:1;padding:9px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
 .btn-edit{background:rgba(241,90,36,.15);color:var(--or2);}
 .btn-del{background:rgba(229,85,85,.12);color:#e55;}
+.btn-lock.lk{background:rgba(229,85,85,.12);color:#e55;}
+.btn-lock.unlk{background:rgba(52,212,90,.15);color:#34d45a;}
 
 /* WORKOUT EDITOR */
 #mEdit{position:fixed;inset:0;background:var(--bg);z-index:40;display:none;flex-direction:column;overflow:hidden;}
@@ -111,7 +113,7 @@ img{display:block;max-width:100%;}
 
 /* APP STUDENT */
 #sApp{flex-direction:column;}
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+32px);overscroll-behavior:contain;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+48px);overscroll-behavior:contain;}
 .topbar{padding:52px 20px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0;}
 .topbar small{display:block;font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;}
 .topbar b{font-family:'Bebas Neue';font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -146,7 +148,7 @@ img{display:block;max-width:100%;}
 .rest{padding:60px 24px;text-align:center;color:var(--gray);}
 .rest svg{width:48px;height:48px;fill:var(--orange);opacity:.7;margin:0 auto 16px;}
 .rest h3{font-size:22px;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
-.fwrap{padding:20px 16px 0;}
+.fwrap{padding:20px 16px 24px;}
 .finbtn{width:100%;padding:16px;border-radius:16px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--orange),var(--or2));color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;}
 .finbtn.done{background:var(--green);color:#042e0e;}
 .finbtn svg{width:18px;height:18px;fill:currentColor;}
@@ -410,6 +412,11 @@ async function addAluno(){
   }
 }
 
+async function toggleBloqueio(uid, bloqueado){
+  await db.collection('users').doc(uid).update({ bloqueado: !bloqueado });
+  renderAlunos();
+}
+
 async function renderAlunos(){
   const el = document.getElementById('stuList');
   el.innerHTML = '<p style="color:var(--gray);font-size:14px">Carregando...</p>';
@@ -524,6 +531,12 @@ async function carregarAluno(user){
   const doc = await db.collection('users').doc(user.uid).get();
   if(!doc.exists){ auth.signOut(); go('sCh'); return; }
   const data = doc.data();
+  if(data.bloqueado){
+    auth.signOut();
+    document.getElementById('lErr').textContent = 'Seu acesso está suspenso. Fale com a Raquel.';
+    go('sLogin');
+    return;
+  }
   stuAtual = {...user, ...data};
   // load today's checks from firestore
   const hoje = DS[new Date().getDay()].k;
@@ -550,6 +563,10 @@ async function saveChecks(){
       checks: { data: dataHoje, prog: prog }
     });
   }catch(e){}
+}
+
+function gifError(img){
+  img.parentElement.innerHTML='<div style="display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#111;border-radius:12px;color:#888;font-size:13px;flex-direction:column;gap:10px"><svg viewBox=\"0 0 24 24\" style=\"width:40px;height:40px;fill:#f15a24;opacity:.7\"><path d=\"M13 2.05V4.05C17.39 4.59 20.5 8.58 19.96 12.97C19.5 16.61 16.64 19.5 13 19.93V21.93C18.5 21.38 22.5 16.5 21.95 11C21.5 6.25 17.73 2.5 13 2.05M11 2.06C9.05 2.25 7.19 3 5.67 4.26L7.1 5.74C8.22 4.84 9.57 4.26 11 4.06V2.06M4.26 5.67C3 7.19 2.25 9.04 2.05 11H4.05C4.24 9.58 4.8 8.23 5.69 7.1L4.26 5.67M2.06 13C2.26 14.96 3.03 16.81 4.27 18.33L5.69 16.9C4.81 15.77 4.24 14.42 4.06 13H2.06M7.1 18.37L5.67 19.74C7.18 21 9.04 21.79 11 22V20C9.58 19.82 8.23 19.25 7.1 18.37M12 7L8 11H11V16H13V11H16L12 7Z\"/></svg>Demonstração indisponível</div>';
 }
 
 function toggleCheck(i){
@@ -597,17 +614,16 @@ function workout(){
   const ok = feitos===tot&&tot>0;
   area.innerHTML=`
     <div class="whead">
-      <div class="wtag">${selDia===hoje?'Treino de hoje · ':''}${dl}</div>
+      <div class="wtag">${selDia===hoje?'Hoje · ':''}${dl}</div>
       <h2>${tr.titulo||'Treino'}</h2>
-      <p>${tot} exercícios · toque pra ver o vídeo</p>
+      <p>${tot} exercícios</p>
     </div>
     <div class="exlist">
       ${tr.ex.map((e,i)=>`
-        <<div class="excard ${f[i]?'done':''}" style="gap:10px">
-          <div class="thumb" onclick="abrir(${i})" style="flex-shrink:0"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <div class="exinfo" onclick="abrir(${i})" style="flex:1;min-width:0"><b>${e.n}</b><small>${e.s} séries · ${e.r} reps · ${e.d} descanso</small></div>
-          <div class="chk" onclick="event.stopPropagation();toggleCheck(${i})" style="cursor:pointer;flex-shrink:0"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
-        </div>
+        <div class="excard ${f[i]?'done':''}">
+          <div class="thumb" onclick="abrir(${i})"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="exinfo" onclick="abrir(${i})"><b>${e.n}</b><small>${e.s} séries · ${e.r} reps · ${e.d} descanso</small></div>
+          <div class="chk" onclick="event.stopPropagation();toggleCheck(${i})"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
         </div>`).join('')}
     </div>
     <div class="fwrap"><button class="finbtn ${ok?'done':''}" onclick="concluir()">
@@ -615,8 +631,7 @@ function workout(){
     </button></div>`;
 }
 
-const RAPIDAPI_KEY = "14b43d5f50msh8e57efad88ed2e7p1fd826jsn422c249ae98e";
-const exCache = {};
+const LOCAL_EX_DB = {"agachamento livre": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "agachamento smith": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Machine_Squat/0.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "leg press": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Calf_Press_On_The_Leg_Press_Machine/0.jpg", "muscles": ["panturrilha"]}, "cadeira extensora": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg", "muscles": ["quadríceps"]}, "mesa flexora": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg", "muscles": ["posterior"]}, "cadeira flexora": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/0.jpg", "muscles": ["posterior"]}, "elevação pélvica": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg", "muscles": ["glúteos", "panturrilha", "posterior"]}, "afundo": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/0.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "panturrilha": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rocking_Standing_Calf_Raise/0.jpg", "muscles": ["panturrilha"]}, "supino reto com barra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "supino reto com halteres": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Bench_Press/0.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "crucifixo reto": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Flyes/0.jpg", "muscles": ["peitoral"]}, "puxada frente": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "remada curvada com barra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "remada sentada": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "desenvolvimento com barra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg", "muscles": ["deltóide", "peitoral", "tríceps"]}, "desenvolvimento com halteres": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg", "muscles": ["deltóide", "tríceps"]}, "elevação lateral": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Side_Lateral_Raise/0.jpg", "muscles": ["deltóide"]}, "elevação frontal": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/0.jpg", "muscles": ["deltóide"]}, "rosca direta com barra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/0.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca direta com halteres": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/0.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca alternada": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/0.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca martelo": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hammer_Curls_-_Rope_Attachment/0.jpg", "muscles": ["bíceps"]}, "rosca scott": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Preacher_Curl/0.jpg", "muscles": ["bíceps", "antebraço"]}, "tríceps corda": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Grip_Triceps_Pushdown/0.jpg", "muscles": ["tríceps"]}, "abdominal supra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/0.jpg", "muscles": ["abdômen"]}, "abdominal infra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg", "muscles": ["abdômen"]}, "prancha": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg", "muscles": ["abdômen"]}, "stiff com barra": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg", "muscles": ["posterior", "panturrilha", "glúteos"]}, "hiperextensão lombar": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/0.jpg", "muscles": ["lombar", "glúteos", "posterior"]}, "desenvolvimento de ombro": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg", "muscles": ["deltóide", "tríceps"]}, "remada unilateral": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "puxada por trás": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Front_Lat_Pulldown/0.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "agachamento com salto": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Freehand_Jump_Squat/0.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "mountain climber": {"img": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/0.jpg", "muscles": ["quadríceps", "peitoral", "posterior"]}};
 
 async function abrir(i){
   const e = stuAtual.treinos[selDia].ex[i];
@@ -628,63 +643,101 @@ async function abrir(i){
   document.getElementById('mr').textContent=e.r+' reps';
   document.getElementById('md').textContent=e.d+' descanso';
   document.getElementById('mnt').textContent=e.obs||'';
-  document.getElementById('vf').innerHTML='<div class="ex-gif-wrap"><div class="loading-gif"><div class="spinner"></div> Carregando...</div></div>';
   document.getElementById('ov').classList.add('on');
   workout(); strip();
-  // fetch ExerciseDB
-  try{
-    const nome = e.n.toLowerCase().trim();
-    let exData = exCache[nome];
-    if(!exData){
-      // translate common names to english for search
-      const translations = {
-        'agachamento':'squat','agachamento livre':'barbell squat','agachamento smith':'smith machine squat',
-        'leg press':'leg press','cadeira extensora':'leg extension','mesa flexora':'lying leg curl',
-        'cadeira flexora':'seated leg curl','cadeira abdutora':'hip abduction','cadeira adutora':'hip adduction',
-        'stiff':'romanian deadlift','elevação pélvica':'hip thrust','afundo':'lunge',
-        'panturrilha':'calf raise','supino reto':'bench press','supino inclinado':'incline bench press',
-        'supino':'bench press','crucifixo':'cable fly','crossover':'cable crossover',
-        'puxada':'lat pulldown','remada curvada':'bent over row','remada sentada':'seated row',
-        'remada unilateral':'one arm row','pullover':'pullover','desenvolvimento':'shoulder press',
-        'elevação lateral':'lateral raise','elevação frontal':'front raise','rosca direta':'barbell curl',
-        'rosca alternada':'dumbbell alternate curl','rosca scott':'preacher curl','rosca martelo':'hammer curl',
-        'tríceps corda':'cable triceps pushdown','tríceps testa':'triceps skull crusher',
-        'abdominal':'crunch','prancha':'plank','burpee':'burpee','hiperextensão':'hyperextension',
-        'desenvolvimento com halteres':'dumbbell shoulder press','desenvolvimento com barra':'barbell overhead press',
-      };
-      let searchTerm = nome;
-      for(const [pt,en] of Object.entries(translations)){
-        if(nome.includes(pt)){ searchTerm=en; break; }
-      }
-      const url = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(searchTerm)}?limit=1&offset=0`;
-      const res = await fetch(url, {
-        headers: {'x-rapidapi-key':RAPIDAPI_KEY,'x-rapidapi-host':'exercisedb.p.rapidapi.com'}
-      });
-      const data = await res.json();
-      exData = data && data.length ? data[0] : null;
-      if(exData) exCache[nome]=exData;
+
+  // Look up exercise in local DB (case-insensitive partial match)
+  const nome = e.n.toLowerCase().trim();
+  let found = null;
+  for(const [key, val] of Object.entries(LOCAL_EX_DB)){
+    if(nome.includes(key) || key.includes(nome)){ found = val; break; }
+  }
+  // also try word-by-word match
+  if(!found){
+    const words = nome.split(' ').filter(w=>w.length>3);
+    for(const [key, val] of Object.entries(LOCAL_EX_DB)){
+      if(words.some(w=>key.includes(w))){ found=val; break; }
     }
-    if(exData){
-      const muscles = [exData.target,...(exData.secondaryMuscles||[]).slice(0,2)];
-      const musclesPT = muscles.map(m=>m.replace('glutes','glúteos').replace('quadriceps','quadríceps')
-        .replace('hamstrings','posterior').replace('abductors','abdutores').replace('adductors','adutores')
-        .replace('calves','panturrilha').replace('pectorals','peitoral').replace('lats','dorsal')
-        .replace('traps','trapézio').replace('biceps','bíceps').replace('triceps','tríceps')
-        .replace('delts','deltóide').replace('abs','abdômen').replace('spine','lombar')
-        .replace('forearms','antebraço').replace('upper back','costas').replace('lower back','lombar'));
-      document.getElementById('vf').innerHTML=`
-        <div class="ex-gif-wrap"><img class="ex-gif" src="${exData.gifUrl}" alt="${e.n}" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background:#111;border-radius:12px;color:#888;font-size:13px;flex-direction:column;gap:10px\'><svg viewBox=\"0 0 24 24\" style=\"width:40px;height:40px;fill:#f15a24;opacity:.7\"><path d=\"M13 2.05V4.05C17.39 4.59 20.5 8.58 19.96 12.97C19.5 16.61 16.64 19.5 13 19.93V21.93C18.5 21.38 22.5 16.5 21.95 11C21.5 6.25 17.73 2.5 13 2.05M11 2.06C9.05 2.25 7.19 3 5.67 4.26L7.1 5.74C8.22 4.84 9.57 4.26 11 4.06V2.06M4.26 5.67C3 7.19 2.25 9.04 2.05 11H4.05C4.24 9.58 4.8 8.23 5.69 7.1L4.26 5.67M2.06 13C2.26 14.96 3.03 16.81 4.27 18.33L5.69 16.9C4.81 15.77 4.24 14.42 4.06 13H2.06M7.1 18.37L5.67 19.74C7.18 21 9.04 21.79 11 22V20C9.58 19.82 8.23 19.25 7.1 18.37M12 7L8 11H11V16H13V11H16L12 7Z\"/></svg>${e.n}</div>'"></div>
-        <div class="muscles-row">
-          ${musclesPT.map((m,idx)=>`<span class="muscle-tag ${idx>0?'sec':''}">${idx===0?'🎯 ':''}${m}</span>`).join('')}
-          
-        </div>`;
-    } else {
-      document.getElementById('vf').innerHTML=`<div class="no-gif"><svg viewBox="0 0 24 24" style="width:36px;height:36px;fill:var(--orange);opacity:.6"><path d="M13 2.05V4.05C17.39 4.59 20.5 8.58 19.96 12.97C19.5 16.61 16.64 19.5 13 19.93V21.93C18.5 21.38 22.5 16.5 21.95 11C21.5 6.25 17.73 2.5 13 2.05M11 2.06C9.05 2.25 7.19 3 5.67 4.26L7.1 5.74C8.22 4.84 9.57 4.26 11 4.06V2.06M4.26 5.67C3 7.19 2.25 9.04 2.05 11H4.05C4.24 9.58 4.8 8.23 5.69 7.1L4.26 5.67M2.06 13C2.26 14.96 3.03 16.81 4.27 18.33L5.69 16.9C4.81 15.77 4.24 14.42 4.06 13H2.06M7.1 18.37L5.67 19.74C7.18 21 9.04 21.79 11 22V20C9.58 19.82 8.23 19.25 7.1 18.37M12 7L8 11H11V16H13V11H16L12 7Z"/></svg>Sem demonstração disponível</div>`;
-    }
-  } catch(err){
-    document.getElementById('vf').innerHTML=`<div class="no-gif" style="color:#e55">Erro ao carregar demonstração</div>`;
+  }
+
+  if(found){
+    document.getElementById('vf').innerHTML=`
+      <div style="padding:0 16px 10px">
+        <img src="${found.img}" alt="${e.n}"
+          style="width:100%;border-radius:14px;background:#111;display:block"
+          onerror="this.style.display='none'">
+      </div>
+      <div class="muscles-row">
+        ${found.muscles.map(m=>`<span class="muscle-tag">${m}</span>`).join('')}
+      </div>`;
+  } else {
+    document.getElementById('vf').innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:center;height:100px;color:#666;font-size:13px">Demonstração não disponível</div>`;
   }
 }
+
+function toggleCheck(i){
+  if(!prog[selDia]||typeof prog[selDia]!=='object') prog[selDia]={};
+  if(prog[selDia][i]){
+    delete prog[selDia][i];
+    // if was fully done, revert full completion
+    if(prog[selDia]===true) prog[selDia]={};
+  } else {
+    prog[selDia][i]=true;
+  }
+  saveChecks();
+  workout(); strip();
+}
+
+// ===== STRIP + WORKOUT =====
+function strip(){
+  const hoje = DS[new Date().getDay()].k;
+  const base = new Date(); base.setHours(0,0,0,0);
+  document.getElementById('strip').innerHTML = DS.map((d,i)=>{
+    const dt = new Date(base); dt.setDate(dt.getDate()-(DS.findIndex(x=>x.k===hoje)-i));
+    const ok = prog[d.k]===true;
+    return `<div class="dpill ${d.k===hoje?'today':''} ${d.k===selDia?'sel':''}" onclick="mudar('${d.k}')">
+      <small>${d.l}</small><span>${dt.getDate()}</span>${ok?'<span class=\'dot\'></span>':''}
+    </div>`;
+  }).join('');
+}
+
+function mudar(k){ selDia=k; strip(); workout(); }
+
+function workout(){
+  const area = document.getElementById('warea');
+  const treinos = stuAtual.treinos || {};
+  const tr = treinos[selDia];
+  const dl = DS.find(d=>d.k===selDia).l;
+  const hoje = DS[new Date().getDay()].k;
+  if(!tr||tr.rest||!tr.ex||!tr.ex.length){
+    area.innerHTML=`<div class="rest"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg><h3>${tr&&tr.rest?'Descanso':'Treino não cadastrado'}</h3><p>${tr&&tr.rest?'Aproveite pra recuperar.':'A Raquel ainda vai cadastrar esse treino.'}</p></div>`;
+    return;
+  }
+  if(!prog[selDia]) prog[selDia]={};
+  const f = prog[selDia];
+  const tot = tr.ex.length;
+  const feitos = typeof f==='object' ? Object.keys(f).length : 0;
+  const ok = feitos===tot&&tot>0;
+  area.innerHTML=`
+    <div class="whead">
+      <div class="wtag">${selDia===hoje?'Hoje · ':''}${dl}</div>
+      <h2>${tr.titulo||'Treino'}</h2>
+      <p>${tot} exercícios</p>
+    </div>
+    <div class="exlist">
+      ${tr.ex.map((e,i)=>`
+        <div class="excard ${f[i]?'done':''}">
+          <div class="thumb" onclick="abrir(${i})"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="exinfo" onclick="abrir(${i})"><b>${e.n}</b><small>${e.s} séries · ${e.r} reps · ${e.d} descanso</small></div>
+          <div class="chk" onclick="event.stopPropagation();toggleCheck(${i})"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
+        </div>`).join('')}
+    </div>
+    <div class="fwrap"><button class="finbtn ${ok?'done':''}" onclick="concluir()">
+      ${ok?'<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> Treino concluído 🔥':'Concluir treino'}
+    </button></div>`;
+}
+
 
 function fechar(){ document.getElementById('ov').classList.remove('on'); }
 
