@@ -472,7 +472,7 @@ function renderDayEditor(){
           <input class="inp" placeholder="Reps" value="${e.r||''}" oninput="updEx(${i},'r',this.value)">
         </div>
         <input class="inp" placeholder="Descanso (ex: 60s)" value="${e.d||''}" oninput="updEx(${i},'d',this.value)">
-        <input class="inp" placeholder="Link do vídeo YouTube" value="${e.v||''}" oninput="updEx(${i},'v',this.value)">
+        <!-- video field hidden - ExerciseDB provides GIF automatically -->
         <input class="inp" placeholder="Observação de execução (opcional)" value="${(e.obs||'').replace(/"/g,'&quot;')}" oninput="updEx(${i},'obs',this.value)">
       </div>`).join('');
     html += `<button class="add-ex" onclick="addEx()">+ Adicionar exercício</button>`;
@@ -521,8 +521,13 @@ async function carregarAluno(user){
   if(!doc.exists){ auth.signOut(); go('sCh'); return; }
   const data = doc.data();
   stuAtual = {...user, ...data};
-  prog = {};
-  selDia = DS[new Date().getDay()].k;
+  // load today's checks from firestore
+  const hoje = DS[new Date().getDay()].k;
+  const dataHoje = new Date().toLocaleDateString('pt-BR');
+  const checks = data.checks || {};
+  // only restore checks from today
+  prog = (checks.data === dataHoje) ? (checks.prog || {}) : {};
+  selDia = hoje;
   const h = new Date().getHours();
   document.getElementById('saud').textContent = h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
   document.getElementById('stuNome').textContent = data.nome.split(' ')[0]+' 👋';
@@ -531,6 +536,15 @@ async function carregarAluno(user){
   switchTab('Treinos');
   go('sApp');
   strip(); workout();
+}
+
+async function saveChecks(){
+  try{
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+    await db.collection('users').doc(auth.currentUser.uid).update({
+      checks: { data: dataHoje, prog: prog }
+    });
+  }catch(e){}
 }
 
 // ===== STRIP + WORKOUT =====
@@ -589,6 +603,7 @@ async function abrir(i){
   const e = stuAtual.treinos[selDia].ex[i];
   if(!prog[selDia]||typeof prog[selDia]!=='object') prog[selDia]={};
   prog[selDia][i]=true;
+  saveChecks();
   document.getElementById('mn').textContent=e.n;
   document.getElementById('ms').textContent=e.s+' séries';
   document.getElementById('mr').textContent=e.r+' reps';
@@ -659,6 +674,7 @@ async function concluir(){
   if(!prog[selDia]||typeof prog[selDia]!=='object') prog[selDia]={};
   tr.ex.forEach((_,i)=>{ prog[selDia][i]=true; });
   prog[selDia]=true;
+  saveChecks();
   // save to firestore
   const hoje = new Date().toLocaleDateString('pt-BR');
   const hist = {dia:selDia,data:hoje,titulo:tr.titulo||DS.find(d=>d.k===selDia).l};
@@ -758,7 +774,7 @@ function exSuggest(input,idx){
     item.onmousedown=()=>{
       input.value=ex.n;
       updEx(idx,'n',ex.n);
-      updEx(idx,'v','https://www.youtube.com/watch?v='+ex.v);
+      // video auto-fill removed - using ExerciseDB GIF instead
       document.querySelectorAll('.ex-suggest').forEach(e=>e.remove());
       renderDayEditor();
     };
