@@ -308,7 +308,7 @@ img{display:block;max-width:100%;}
         <input class="inp" id="aP" placeholder="Senha" type="text">
       </div>
       <div class="row2" style="margin-bottom:10px">
-        <input class="inp" id="aNasc" placeholder="Nascimento (DD/MM/AAAA)" oninput="maskData(this)" inputmode="numeric" maxlength="10">
+        <input class="inp" id="aIdade" placeholder="Idade" type="number" inputmode="numeric" min="1" max="120" maxlength="3">
         <input class="inp" id="aWpp" placeholder="WhatsApp">
       </div>
       <div class="row2" style="margin-bottom:10px">
@@ -484,7 +484,7 @@ function maskData(input){
 }
 
 function limparFormAluno(){
-  ['aN','aE','aP','aNasc','aWpp','aVal'].forEach(id=>document.getElementById(id).value='');
+  ['aN','aE','aP','aIdade','aWpp','aVal'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('aSexo').value='';
   document.getElementById('aErr').textContent='';
 }
@@ -501,10 +501,10 @@ async function addAluno(){
     const uid = cred.user.uid;
     await secondaryAuth.signOut();
     const validade = document.getElementById('aVal').value.trim();
-    const nasc = document.getElementById('aNasc').value.trim();
+    const idade = document.getElementById('aIdade').value.trim();
     const wpp = document.getElementById('aWpp').value.trim();
     const sexo = document.getElementById('aSexo').value;
-    await db.collection('users').doc(uid).set({ nome:n, email:e, treinos:{}, hist:[], planoAte:validade||'', nascimento:nasc||'', whatsapp:wpp||'', sexo:sexo||'' });
+    await db.collection('users').doc(uid).set({ nome:n, email:e, treinos:{}, hist:[], planoAte:validade||'', idade:idade||'', whatsapp:wpp||'', sexo:sexo||'' });
     limparFormAluno();
     renderAlunos();
   } catch(ex){
@@ -752,7 +752,7 @@ async function editarAluno(uid){
       <input class="inp" id="pNome" placeholder="Nome completo" value="${a.nome||''}">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <input class="inp" id="pWpp" placeholder="WhatsApp" value="${a.wpp||''}">
-        <input class="inp" id="pNasc" placeholder="Nascimento" value="${a.nascimento||''}">
+        <input class="inp" id="pIdade" placeholder="Idade" type="number" inputmode="numeric" min="1" max="120" value="${a.idade||''}">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <select class="inp" id="pSexo"><option value="">Sexo</option><option ${a.sexo==='Feminino'?'selected':''}>Feminino</option><option ${a.sexo==='Masculino'?'selected':''}>Masculino</option><option ${a.sexo==='Outro'?'selected':''}>Outro</option></select>
@@ -816,7 +816,7 @@ async function salvarPerfil(){
   await db.collection('users').doc(editProfileUid).update({
     nome: document.getElementById('pNome').value.trim(),
     wpp: document.getElementById('pWpp').value.trim(),
-    nascimento: document.getElementById('pNasc').value.trim(),
+    idade: document.getElementById('pIdade').value.trim(),
     sexo: document.getElementById('pSexo').value,
     planoAte: document.getElementById('pPlano').value.trim(),
   });
