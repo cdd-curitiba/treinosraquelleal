@@ -58,7 +58,7 @@ img{display:block;max-width:100%;}
 .errmsg{color:#e55;font-size:12.5px;min-height:18px;margin-bottom:8px;}
 
 /* ADMIN PANEL */
-#sAdm{flex-direction:column;}
+#sAdm{flex-direction:column;width:100%;}
 .adm-top{padding:52px 20px 14px;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .adm-top h2{font-size:20px;text-transform:uppercase;}
 .adm-top button{background:none;border:none;color:var(--gray);font-size:13px;cursor:pointer;}
@@ -205,9 +205,9 @@ img{display:block;max-width:100%;}
 .adm-tabs{display:flex;overflow-x:auto;gap:6px;padding:12px 16px 0;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--line);}
 .adm-tabs::-webkit-scrollbar{display:none;}
 .adm-tab{flex-shrink:0;padding:9px 14px;border-radius:10px 10px 0 0;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--gray);border:1px solid transparent;border-bottom:none;white-space:nowrap;}
-.adm-tab.on{background:var(--card);border-color:var(--line);color:var(--or2);}
+.adm-tab.on{background:var(--card);border-color:var(--line);color:var(--or2);} .adm-tabs{width:100%;}
 .adm-panel{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px 40px;}
-.adm-panel.on{display:block;}
+.adm-panel.on{display:flex;flex-direction:column;}
 
 /* ALERT BADGE */
 .badge{display:inline-block;background:var(--orange);color:#1a0800;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;margin-left:6px;}
@@ -310,12 +310,12 @@ img{display:block;max-width:100%;}
         <input class="inp" id="aP" placeholder="Senha" type="text">
       </div>
       <div class="row2" style="margin-bottom:10px">
-        <input class="inp" id="aNasc" placeholder="Nascimento (DD/MM/AAAA)">
+        <input class="inp" id="aNasc" placeholder="Nascimento (DD/MM/AAAA)" oninput="maskData(this)" inputmode="numeric" maxlength="10">
         <input class="inp" id="aWpp" placeholder="WhatsApp">
       </div>
       <div class="row2" style="margin-bottom:10px">
         <select class="inp" id="aSexo"><option value="">Sexo</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select>
-        <input class="inp" id="aVal" placeholder="Plano válido até">
+        <input class="inp" id="aVal" placeholder="Plano válido até (DD/MM/AAAA)" oninput="maskData(this)" inputmode="numeric" maxlength="10">
       </div>
       <div class="errmsg" id="aErr"></div>
       <button class="btn-o" onclick="addAluno()">Criar acesso</button>
@@ -478,6 +478,19 @@ function admLogin(){
   }
 }
 
+function maskData(input){
+  let v = input.value.replace(/\D/g,'').slice(0,8);
+  if(v.length>=5) v = v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+  else if(v.length>=3) v = v.slice(0,2)+'/'+v.slice(2);
+  input.value = v;
+}
+
+function limparFormAluno(){
+  ['aN','aE','aP','aNasc','aWpp','aVal'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('aSexo').value='';
+  document.getElementById('aErr').textContent='';
+}
+
 async function addAluno(){
   const n = document.getElementById('aN').value.trim();
   const e = document.getElementById('aE').value.trim().toLowerCase();
@@ -490,12 +503,11 @@ async function addAluno(){
     const uid = cred.user.uid;
     await secondaryAuth.signOut();
     const validade = document.getElementById('aVal').value.trim();
-    await db.collection('users').doc(uid).set({ nome:n, email:e, treinos:{}, hist:[], planoAte:validade||'' });
-    document.getElementById('aVal').value='';
-    document.getElementById('aN').value='';
-    document.getElementById('aE').value='';
-    document.getElementById('aP').value='';
-    err.textContent = '';
+    const nasc = document.getElementById('aNasc').value.trim();
+    const wpp = document.getElementById('aWpp').value.trim();
+    const sexo = document.getElementById('aSexo').value;
+    await db.collection('users').doc(uid).set({ nome:n, email:e, treinos:{}, hist:[], planoAte:validade||'', nascimento:nasc||'', whatsapp:wpp||'', sexo:sexo||'' });
+    limparFormAluno();
     renderAlunos();
   } catch(ex){
     if(ex.code==='auth/email-already-in-use') err.textContent='E-mail já cadastrado.';
@@ -777,7 +789,7 @@ async function renderAlunos(){
         <div class="stu-btns">
           <button class="btn-edit" onclick="abrirEdit('${uid}','${a.nome.split(' ')[0]}')">✏️ Treino</button>
           <button class="btn-edit" style="background:rgba(100,149,255,.15);color:#6495ff" onclick="verHistoricoAluno('${uid}','${a.nome.split(' ')[0]}')">📋 Histórico</button>
-          <button class="btn-lock ${a.bloqueado?'unlk':'lk'}" onclick="toggleBloqueio('${uid}',${a.bloqueado?true:false})">${a.bloqueado?'🔓':'🔒'}</button>
+          <button class="btn-lock ${a.bloqueado?'lk':'unlk'}" onclick="toggleBloqueio('${uid}',${a.bloqueado?true:false})">${a.bloqueado?'🔒':'🔓'}</button>
           <button class="btn-del" onclick="delAluno('${uid}')">✕</button>
         </div>
       </div>`;
@@ -889,6 +901,14 @@ async function aplicarModeloEditor(modeloId){
   if(!confirm('Substituir o treino atual pelo modelo? Esta ação não pode ser desfeita até salvar.')) return;
   const mDoc = await db.collection('modelos').doc(modeloId).get();
   editData = {...(mDoc.data().treinos||{})};
+  // pega os dias que o modelo realmente preencheu com treino
+  const diasComTreino = Object.keys(editData).filter(k => editData[k] && !editData[k].rest && editData[k].ex && editData[k].ex.length);
+  if(!diasComTreino.length){
+    alert('Esse modelo ainda não tem nenhum exercício salvo. Edite o modelo e adicione os treinos antes de aplicar.');
+  } else if(!diasComTreino.includes(editDia)){
+    // dia atual não tem nada no modelo -> pula pro primeiro dia que tem
+    editDia = diasComTreino[0];
+  }
   renderDayTabs(); renderDayEditor();
   // reset select
   const sel = document.querySelector('#modelBar select');
@@ -914,23 +934,76 @@ function renderDayEditor(){
   if(!isRest){
     html += `<input class="inp day-title-inp" id="dtitle" placeholder="Nome do treino (ex: Treino A · Inferiores)" value="${(tr.titulo||'').replace(/"/g,'&quot;')}">`;
     const exs = tr.ex||[];
-    html += exs.map((e,i)=>`
+    html += exs.map((e,i)=>{
+      const preview = exPreviewHtml(i);
+      return `
       <div class="ex-item">
         <button class="rm-ex" onclick="rmEx(${i})">×</button>
         <div style="position:relative">
-          <input class="inp" placeholder="Digite para buscar exercício..." value="${(e.n||'').replace(/"/g,'&quot;')}" oninput="updEx(${i},'n',this.value);exSuggest(this,${i})" onblur="setTimeout(()=>document.querySelectorAll('.ex-suggest').forEach(x=>x.remove()),200)" autocomplete="off">
+          <input class="inp" placeholder="Digite para buscar exercício..." value="${(e.n||'').replace(/"/g,'&quot;')}" oninput="updEx(${i},'n',this.value);exSuggest(this,${i});updateExPreview(${i})" onblur="setTimeout(()=>document.querySelectorAll('.ex-suggest').forEach(x=>x.remove()),200)" autocomplete="off">
         </div>
+        <div id="exPrev${i}">${preview}</div>
         <div class="row2">
           <input class="inp" placeholder="Séries" value="${e.s||''}" oninput="updEx(${i},'s',this.value)">
           <input class="inp" placeholder="Reps" value="${e.r||''}" oninput="updEx(${i},'r',this.value)">
         </div>
         <input class="inp" placeholder="Descanso (ex: 60s)" value="${e.d||''}" oninput="updEx(${i},'d',this.value)">
-        <!-- video field hidden - ExerciseDB provides GIF automatically -->
         <input class="inp" placeholder="Observação de execução (opcional)" value="${(e.obs||'').replace(/"/g,'&quot;')}" oninput="updEx(${i},'obs',this.value)">
-      </div>`).join('');
+      </div>`;
+    }).join('');
     html += `<button class="add-ex" onclick="addEx()">+ Adicionar exercício</button>`;
   }
   document.getElementById('editBody').innerHTML = html;
+}
+
+function exPreviewHtml(i){
+  const e = (editData[editDia]&&editData[editDia].ex[i]) || {};
+  const nome = (e.n||'').toLowerCase().trim();
+  let preview = '';
+  if(nome.length >= 3){
+    let found = LOCAL_EX_DB[nome];
+    if(!found){
+      for(const [key,val] of Object.entries(LOCAL_EX_DB)){
+        if(key.length >= 8 && (nome === key || nome.startsWith(key) || key.startsWith(nome))){ found=val; break; }
+      }
+    }
+    if(found){
+      preview = `<div style="margin-bottom:8px;border-radius:10px;overflow:hidden;position:relative">
+        <div class="ex-anim-wrap" style="margin:0;width:100%;aspect-ratio:4/3;border-radius:10px">
+          <img class="img0" src="${found.img0}" style="border-radius:10px" onerror="this.style.display='none'">
+          <img class="img1" src="${found.img1}" style="border-radius:10px" onerror="this.style.display='none'">
+        </div>
+        <div style="position:absolute;top:6px;right:6px;display:flex;gap:6px">
+          <span style="background:rgba(0,0,0,.7);color:#34d45a;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px">✓ ${found.muscles[0]||''}</span>
+          <button onclick="limparImgEx(${i})" style="background:rgba(229,85,85,.85);border:none;color:#fff;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer">✕ Remover</button>
+        </div>
+      </div>`;
+    } else if(nome.length >= 5){
+      preview = `<div style="margin-bottom:8px;padding:8px 10px;background:#111;border-radius:8px;font-size:12px;color:#e55">⚠ Sem imagem cadastrada para este exercício</div>`;
+    }
+  }
+  return preview;
+}
+
+function updateExPreview(i){
+  const el = document.getElementById('exPrev'+i);
+  if(!el) return;
+  el.innerHTML = exPreviewHtml(i);
+}
+
+function limparImgEx(i){
+  // mark exercise as "no image" by adding a flag
+  if(!editData[editDia].ex[i]) return;
+  const nomeAtual = editData[editDia].ex[i].n || '';
+  const novoNome = prompt('Exercício atual: "'+nomeAtual+'"\n\nDigite o nome correto (ou deixe em branco para remover a imagem mesmo):', nomeAtual);
+  if(novoNome === null) return; // cancelled
+  if(novoNome.trim() && novoNome.trim() !== nomeAtual){
+    editData[editDia].ex[i].n = novoNome.trim();
+  } else if(novoNome.trim() === ''){
+    // blank = keep name but mark no image
+    editData[editDia].ex[i].semImagem = true;
+  }
+  renderDayEditor();
 }
 
 function toggleRest(v){
