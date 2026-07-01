@@ -119,7 +119,7 @@ img{display:block;max-width:100%;}
 
 /* APP STUDENT */
 #sApp{flex-direction:column;}
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+48px);overscroll-behavior:contain;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h)+80px);overscroll-behavior:contain;}
 .topbar{padding:52px 20px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0;}
 .topbar small{display:block;font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;}
 .topbar b{font-family:'Bebas Neue';font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -154,7 +154,7 @@ img{display:block;max-width:100%;}
 .rest{padding:60px 24px;text-align:center;color:var(--gray);}
 .rest svg{width:48px;height:48px;fill:var(--orange);opacity:.7;margin:0 auto 16px;}
 .rest h3{font-size:22px;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
-.fwrap{padding:20px 16px 24px;}
+.fwrap{padding:20px 16px 32px;}
 .finbtn{width:100%;padding:16px;border-radius:16px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--orange),var(--or2));color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;}
 .finbtn.done{background:var(--green);color:#042e0e;}
 .finbtn svg{width:18px;height:18px;fill:currentColor;}
@@ -200,6 +200,47 @@ img{display:block;max-width:100%;}
 .ex-anim-wrap .img1{animation:swap2 1.2s steps(1) infinite;}
 @keyframes swap{0%,49%{opacity:1}50%,100%{opacity:0}}
 @keyframes swap2{0%,49%{opacity:0}50%,100%{opacity:1}}
+
+/* ADMIN TABS */
+.adm-tabs{display:flex;overflow-x:auto;gap:6px;padding:12px 16px 0;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--line);}
+.adm-tabs::-webkit-scrollbar{display:none;}
+.adm-tab{flex-shrink:0;padding:9px 14px;border-radius:10px 10px 0 0;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--gray);border:1px solid transparent;border-bottom:none;white-space:nowrap;}
+.adm-tab.on{background:var(--card);border-color:var(--line);color:var(--or2);}
+.adm-panel{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px 40px;}
+.adm-panel.on{display:block;}
+
+/* ALERT BADGE */
+.badge{display:inline-block;background:var(--orange);color:#1a0800;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;margin-left:6px;}
+
+/* VENCIMENTO */
+.venc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.venc-days{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;font-family:'Bebas Neue';font-size:20px;}
+.venc-days.red{background:rgba(229,85,85,.15);color:#e55;}
+.venc-days.yellow{background:rgba(255,200,0,.12);color:#ffc800;}
+.venc-days.green{background:rgba(52,212,90,.12);color:var(--green);}
+.venc-days small{font-size:9px;font-family:'Inter';font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:-4px;}
+
+/* RANKING */
+.rank-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.rank-pos{width:36px;height:36px;border-radius:50%;background:#1f1f1f;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:18px;flex-shrink:0;}
+.rank-pos.gold{background:rgba(255,200,0,.2);color:#ffc800;}
+.rank-pos.silver{background:rgba(180,180,180,.2);color:#bbb;}
+.rank-pos.bronze{background:rgba(200,120,60,.2);color:#c87840;}
+.rank-bar{height:4px;background:var(--line);border-radius:99px;margin-top:6px;overflow:hidden;}
+.rank-bar-fill{height:100%;background:var(--orange);border-radius:99px;}
+
+/* MODELOS */
+.modelo-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.modelo-card h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+.modelo-card p{font-size:12px;color:var(--gray);}
+.modelo-actions{display:flex;gap:8px;margin-top:10px;}
+.modelo-actions button{flex:1;padding:8px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
+
+/* PHOTO UPLOAD */
+.photo-upload{width:100%;aspect-ratio:1/1;border-radius:14px;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;cursor:pointer;background:#0e0e0e;color:var(--gray);font-size:13px;overflow:hidden;position:relative;}
+.photo-upload img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px;}
+.photo-upload input{display:none;}
+.photo-upload.has-img .ph-label{display:none;}
 </style>
 </head>
 <body>
@@ -251,21 +292,58 @@ img{display:block;max-width:100%;}
     <h2>Painel · Raquel Leal</h2>
     <button onclick="logout()">Sair</button>
   </div>
-  <div class="adm-body">
+  <div class="adm-tabs">
+    <div class="adm-tab on" id="atAlunos" onclick="admTab('Alunos')">Alunos</div>
+    <div class="adm-tab" id="atVenc" onclick="admTab('Venc')">Vencimentos <span class="badge" id="vencBadge" style="display:none">!</span></div>
+    <div class="adm-tab" id="atRank" onclick="admTab('Rank')">Frequência</div>
+    <div class="adm-tab" id="atModelos" onclick="admTab('Modelos')">Modelos</div>
+  </div>
+
+  <!-- ALUNOS -->
+  <div class="adm-panel on" id="panAlunos">
     <div class="sec-t">Adicionar aluno</div>
     <div class="add-form">
       <h3>Novo aluno</h3>
-      <input class="inp" id="aN" placeholder="Nome completo">
-      <div class="row2">
+      <input class="inp" id="aN" placeholder="Nome completo" style="margin-bottom:10px">
+      <div class="row2" style="margin-bottom:10px">
         <input class="inp" id="aE" placeholder="E-mail" type="email">
         <input class="inp" id="aP" placeholder="Senha" type="text">
       </div>
-      <input class="inp" id="aVal" placeholder="Plano válido até (ex: 30/07/2025)" type="text">
+      <div class="row2" style="margin-bottom:10px">
+        <input class="inp" id="aNasc" placeholder="Nascimento (DD/MM/AAAA)">
+        <input class="inp" id="aWpp" placeholder="WhatsApp">
+      </div>
+      <div class="row2" style="margin-bottom:10px">
+        <select class="inp" id="aSexo"><option value="">Sexo</option><option>Feminino</option><option>Masculino</option><option>Outro</option></select>
+        <input class="inp" id="aVal" placeholder="Plano válido até">
+      </div>
       <div class="errmsg" id="aErr"></div>
-      <button class="btn-o" style="margin-top:4px" onclick="addAluno()">Criar acesso</button>
+      <button class="btn-o" onclick="addAluno()">Criar acesso</button>
     </div>
     <div class="sec-t">Alunos cadastrados</div>
     <div id="stuList"><p style="color:var(--gray);font-size:14px">Carregando...</p></div>
+  </div>
+
+  <!-- VENCIMENTOS -->
+  <div class="adm-panel" id="panVenc">
+    <div id="vencList"><p style="color:var(--gray);font-size:14px">Carregando...</p></div>
+  </div>
+
+  <!-- RANKING FREQUÊNCIA -->
+  <div class="adm-panel" id="panRank">
+    <div id="rankList"><p style="color:var(--gray);font-size:14px">Carregando...</p></div>
+  </div>
+
+  <!-- MODELOS DE TREINO -->
+  <div class="adm-panel" id="panModelos">
+    <div class="add-form">
+      <h3>Novo modelo</h3>
+      <input class="inp" id="mNome" placeholder="Nome do modelo (ex: Hipertrofia ABC)" style="margin-bottom:10px">
+      <div class="errmsg" id="mErr"></div>
+      <button class="btn-o" onclick="criarModelo()">Criar modelo vazio</button>
+    </div>
+    <div class="sec-t">Modelos salvos</div>
+    <div id="modeloList"><p style="color:var(--gray);font-size:14px">Carregando...</p></div>
   </div>
 </div>
 
@@ -393,7 +471,7 @@ function admLogin(){
     isAdm = true;
     document.getElementById('admPw').value = '';
     document.getElementById('admErr').textContent = '';
-    renderAlunos();
+    renderAlunos(); renderVencimentos(); renderRanking();
     go('sAdm');
   } else {
     document.getElementById('admErr').textContent = 'Senha incorreta.';
@@ -425,9 +503,257 @@ async function addAluno(){
   }
 }
 
+function admTab(t){
+  ['Alunos','Venc','Rank','Modelos'].forEach(x=>{
+    document.getElementById('at'+x).classList.toggle('on',x===t);
+    document.getElementById('pan'+x).classList.toggle('on',x===t);
+  });
+  if(t==='Venc') renderVencimentos();
+  if(t==='Rank') renderRanking();
+  if(t==='Modelos') renderModelos();
+}
+
+async function renderVencimentos(){
+  const el = document.getElementById('vencList');
+  el.innerHTML='<p style="color:var(--gray);font-size:14px">Carregando...</p>';
+  try{
+    const snap = await db.collection('users').get();
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const alunos = [];
+    snap.forEach(doc=>{
+      const a=doc.data();
+      if(!a.planoAte) return;
+      const parts=a.planoAte.split('/');
+      if(parts.length!==3) return;
+      const venc=new Date(parts[2],parts[1]-1,parts[0]);
+      const dias=Math.round((venc-hoje)/(1000*60*60*24));
+      alunos.push({nome:a.nome,planoAte:a.planoAte,dias,uid:doc.id});
+    });
+    alunos.sort((a,b)=>a.dias-b.dias);
+    const vencendo=alunos.filter(a=>a.dias<=7).length;
+    const badge=document.getElementById('vencBadge');
+    badge.style.display=vencendo?'inline-block':'none';
+    badge.textContent=vencendo;
+    if(!alunos.length){el.innerHTML='<p style="color:var(--gray);font-size:14px">Nenhum aluno com validade cadastrada.</p>';return;}
+    el.innerHTML=alunos.map(a=>{
+      const cls=a.dias<0?'red':a.dias<=7?'yellow':'green';
+      const label=a.dias<0?'Vencido':a.dias===0?'Hoje':a.dias+' dias';
+      return`<div class="venc-card">
+        <div class="venc-days ${cls}"><span>${a.dias<0?'!':a.dias>99?'99+':a.dias}</span><small>${a.dias<0?'vencido':'dias'}</small></div>
+        <div><b style="font-size:14px;font-weight:700">${a.nome}</b><div style="font-size:12px;color:var(--gray)">Vence: ${a.planoAte}</div></div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<p style="color:#e55;font-size:13px">Erro: '+e.message+'</p>';}
+}
+
+async function renderRanking(){
+  const el=document.getElementById('rankList');
+  el.innerHTML='<p style="color:var(--gray);font-size:14px">Carregando...</p>';
+  try{
+    const snap=await db.collection('users').get();
+    const alunos=[];
+    snap.forEach(doc=>{
+      const a=doc.data();
+      const total=(a.hist||[]).length;
+      alunos.push({nome:a.nome,total,uid:doc.id});
+    });
+    alunos.sort((a,b)=>b.total-a.total);
+    const max=alunos[0]?.total||1;
+    if(!alunos.length){el.innerHTML='<p style="color:var(--gray);font-size:14px">Nenhum aluno ainda.</p>';return;}
+    el.innerHTML=alunos.map((a,i)=>{
+      const cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const pct=Math.round((a.total/max)*100);
+      return`<div class="rank-card">
+        <div class="rank-pos ${cls}">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700">${a.nome}</div>
+          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+          <div style="font-size:11px;color:var(--gray);margin-top:3px">${a.total} treino${a.total!==1?'s':''} concluído${a.total!==1?'s':''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<p style="color:#e55;font-size:13px">Erro: '+e.message+'</p>';}
+}
+
+async function renderModelos(){
+  const el=document.getElementById('modeloList');
+  el.innerHTML='<p style="color:var(--gray);font-size:14px">Carregando...</p>';
+  try{
+    const snap=await db.collection('modelos').get();
+    if(snap.empty){el.innerHTML='<p style="color:var(--gray);font-size:14px">Nenhum modelo criado ainda.</p>';return;}
+    el.innerHTML='';
+    snap.forEach(doc=>{
+      const m=doc.data();
+      const dias=Object.keys(m.treinos||{}).filter(k=>m.treinos[k]&&!m.treinos[k].rest&&m.treinos[k].ex?.length).length;
+      el.innerHTML+=`<div class="modelo-card">
+        <h4>${m.nome}</h4>
+        <p>${dias} dia${dias!==1?'s':''} de treino configurado${dias!==1?'s':''}</p>
+        <div class="modelo-actions">
+          <button style="background:rgba(241,90,36,.15);color:var(--or2)" onclick="editarModelo('${doc.id}','${m.nome}')">✏️ Editar</button>
+          <button style="background:rgba(52,212,90,.12);color:var(--green)" onclick="aplicarModelo('${doc.id}')">▶ Aplicar a aluno</button>
+          <button style="background:rgba(229,85,85,.12);color:#e55" onclick="deletarModelo('${doc.id}')">Excluir</button>
+        </div>
+      </div>`;
+    });
+  }catch(e){el.innerHTML='<p style="color:#e55;font-size:13px">Erro: '+e.message+'</p>';}
+}
+
+async function criarModelo(){
+  const nome=document.getElementById('mNome').value.trim();
+  const err=document.getElementById('mErr');
+  if(!nome){err.textContent='Coloca um nome pro modelo.';return;}
+  err.textContent='Criando...';
+  await db.collection('modelos').add({nome,treinos:{}});
+  document.getElementById('mNome').value='';
+  err.textContent='';
+  renderModelos();
+}
+
+async function editarModelo(id,nome){
+  // reuse workout editor for templates
+  editUid='modelo:'+id;
+  const doc=await db.collection('modelos').doc(id).get();
+  editData=doc.data().treinos||{};
+  document.getElementById('editTitle').textContent='Modelo: '+nome;
+  editDia='seg'; renderDayTabs(); renderDayEditor();
+  document.getElementById('mEdit').classList.add('on');
+}
+
+async function salvarTreino(){
+  const titleEl=document.getElementById('dtitle');
+  if(titleEl&&editData[editDia]) editData[editDia].titulo=titleEl.value.trim();
+  if(editUid.startsWith('modelo:')){
+    const id=editUid.replace('modelo:','');
+    await db.collection('modelos').doc(id).update({treinos:editData});
+  } else {
+    await db.collection('users').doc(editUid).update({treinos:editData});
+  }
+  fecharEdit();
+  alert('Salvo!');
+}
+
+async function aplicarModelo(modeloId){
+  const snap=await db.collection('users').get();
+  if(snap.empty){alert('Nenhum aluno cadastrado.');return;}
+  let opts='Escolha o aluno:\n';
+  const alunos=[];
+  snap.forEach(doc=>{alunos.push({uid:doc.id,nome:doc.data().nome});});
+  alunos.forEach((a,i)=>opts+=i+1+'. '+a.nome+'\n');
+  const escolha=prompt(opts+'\nDigite o número:');
+  if(!escolha) return;
+  const idx=parseInt(escolha)-1;
+  if(isNaN(idx)||!alunos[idx]){alert('Opção inválida.');return;}
+  const mDoc=await db.collection('modelos').doc(modeloId).get();
+  await db.collection('users').doc(alunos[idx].uid).update({treinos:mDoc.data().treinos});
+  alert('Treino do modelo aplicado para '+alunos[idx].nome+'!');
+}
+
+async function deletarModelo(id){
+  if(!confirm('Excluir este modelo?')) return;
+  await db.collection('modelos').doc(id).delete();
+  renderModelos();
+}
+
 async function toggleBloqueio(uid, bloqueado){
   await db.collection('users').doc(uid).update({ bloqueado: !bloqueado });
   renderAlunos();
+}
+
+// ── STUDENT PROFILE EDITOR ──
+let editProfileUid = null;
+
+async function editarAluno(uid){
+  editProfileUid = uid;
+  const doc = await db.collection('users').doc(uid).get();
+  const a = doc.data();
+  // Build a fullscreen modal for profile editing
+  let modal = document.getElementById('profileModal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'profileModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:#0a0a0a;z-index:45;display:flex;flex-direction:column;overflow:hidden;';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div style="padding:52px 20px 14px;background:#0a0a0a;border-bottom:1px solid #252525;display:flex;align-items:center;gap:12px;flex-shrink:0">
+      <button onclick="fecharPerfil()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer">&#8592;</button>
+      <h2 style="font-family:Bebas Neue;font-size:18px;text-transform:uppercase;flex:1">${a.nome.split(' ')[0]}</h2>
+      <button onclick="salvarPerfil()" style="background:#f15a24;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer">Salvar</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <input class="inp" id="pNome" placeholder="Nome completo" value="${a.nome||''}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <input class="inp" id="pWpp" placeholder="WhatsApp" value="${a.wpp||''}">
+        <input class="inp" id="pNasc" placeholder="Nascimento" value="${a.nascimento||''}">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <select class="inp" id="pSexo"><option value="">Sexo</option><option ${a.sexo==='Feminino'?'selected':''}>Feminino</option><option ${a.sexo==='Masculino'?'selected':''}>Masculino</option><option ${a.sexo==='Outro'?'selected':''}>Outro</option></select>
+        <input class="inp" id="pPlano" placeholder="Plano válido até" value="${a.planoAte||''}">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;letter-spacing:.05em">Foto de perfil</div>
+          <label class="photo-upload ${a.fotoPerfil?'has-img':''}" onclick="document.getElementById('upPerf').click()">
+            ${a.fotoPerfil?`<img src="${a.fotoPerfil}" alt="perfil">`:''}
+            <span class="ph-label" style="font-size:12px;color:var(--gray);text-align:center">Toque para<br>adicionar</span>
+          </label>
+          <input type="file" id="upPerf" accept="image/*" onchange="uploadPhoto(this,'fotoPerfil')">
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;letter-spacing:.05em">Foto avaliação</div>
+          <label class="photo-upload ${a.fotoAvaliacao?'has-img':''}" onclick="document.getElementById('upAval').click()">
+            ${a.fotoAvaliacao?`<img src="${a.fotoAvaliacao}" alt="avaliação">`:''}
+            <span class="ph-label" style="font-size:12px;color:var(--gray);text-align:center">Toque para<br>adicionar</span>
+          </label>
+          <input type="file" id="upAval" accept="image/*" onchange="uploadPhoto(this,'fotoAvaliacao')">
+        </div>
+      </div>
+    </div>`;
+  modal.style.display = 'flex';
+}
+
+function fecharPerfil(){
+  const m = document.getElementById('profileModal');
+  if(m) m.style.display = 'none';
+}
+
+async function uploadPhoto(input, field){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    // compress to max ~150KB
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      const max = 400;
+      let w = img.width, h = img.height;
+      if(w>h){ if(w>max){h=h*(max/w);w=max;} } else { if(h>max){w=w*(max/h);h=max;} }
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const data = canvas.toDataURL('image/jpeg',0.7);
+      await db.collection('users').doc(editProfileUid).update({[field]:data});
+      // update the preview img in modal
+      const wrap = input.previousElementSibling;
+      let imgEl = wrap.querySelector('img');
+      if(!imgEl){ imgEl=document.createElement('img'); wrap.insertBefore(imgEl,wrap.firstChild); }
+      imgEl.src=data; imgEl.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px';
+      wrap.classList.add('has-img');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function salvarPerfil(){
+  await db.collection('users').doc(editProfileUid).update({
+    nome: document.getElementById('pNome').value.trim(),
+    wpp: document.getElementById('pWpp').value.trim(),
+    nascimento: document.getElementById('pNasc').value.trim(),
+    sexo: document.getElementById('pSexo').value,
+    planoAte: document.getElementById('pPlano').value.trim(),
+  });
+  fecharPerfil();
+  renderAlunos(); renderVencimentos();
 }
 
 async function renderAlunos(){
@@ -516,14 +842,6 @@ function updEx(i,key,val){
 function rmEx(i){ editData[editDia].ex.splice(i,1); renderDayEditor(); }
 function addEx(){ if(!editData[editDia]) editData[editDia]={titulo:'',ex:[],rest:false}; editData[editDia].ex.push({n:'',s:'',r:'',d:'',v:'',obs:''}); renderDayEditor(); }
 
-async function salvarTreino(){
-  const titleEl = document.getElementById('dtitle');
-  if(titleEl && editData[editDia]) editData[editDia].titulo = titleEl.value.trim();
-  await db.collection('users').doc(editUid).update({ treinos: editData });
-  fecharEdit();
-  alert('Treino salvo!');
-}
-
 // ===== STUDENT LOGIN =====
 async function stuLogin(){
   const e = document.getElementById('lE').value.trim();
@@ -551,12 +869,19 @@ async function carregarAluno(user){
     return;
   }
   stuAtual = {...user, ...data};
-  // load today's checks from firestore
+  // load checks - keep until Monday (new week)
   const hoje = DS[new Date().getDay()].k;
-  const dataHoje = new Date().toLocaleDateString('pt-BR');
+  const now = new Date();
+  // week key: year+week number
+  const weekKey = (() => {
+    const d = new Date(now); d.setHours(0,0,0,0);
+    d.setDate(d.getDate() + 4 - (d.getDay()||7));
+    const y = d.getFullYear();
+    const w = Math.ceil((((d-new Date(y,0,1))/86400000)+1)/7);
+    return y+'W'+w;
+  })();
   const checks = data.checks || {};
-  // only restore checks from today
-  prog = (checks.data === dataHoje) ? (checks.prog || {}) : {};
+  prog = (checks.week === weekKey) ? (checks.prog || {}) : {};
   selDia = hoje;
   const h = new Date().getHours();
   document.getElementById('saud').textContent = h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
@@ -569,11 +894,17 @@ async function carregarAluno(user){
   strip(); workout();
 }
 
+function getWeekKey(){
+  const d = new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 4 - (d.getDay()||7));
+  const y = d.getFullYear();
+  const w = Math.ceil((((d-new Date(y,0,1))/86400000)+1)/7);
+  return y+'W'+w;
+}
 async function saveChecks(){
   try{
-    const dataHoje = new Date().toLocaleDateString('pt-BR');
     await db.collection('users').doc(auth.currentUser.uid).update({
-      checks: { data: dataHoje, prog: prog }
+      checks: { week: getWeekKey(), prog: prog }
     });
   }catch(e){}
 }
@@ -597,13 +928,19 @@ function toggleCheck(i){
 
 // ===== STRIP + WORKOUT =====
 function strip(){
-  const hoje = DS[new Date().getDay()].k;
+  const hojeIdx = new Date().getDay(); // 0=sun,1=mon...
   const base = new Date(); base.setHours(0,0,0,0);
-  document.getElementById('strip').innerHTML = DS.map((d,i)=>{
-    const dt = new Date(base); dt.setDate(dt.getDate()-(DS.findIndex(x=>x.k===hoje)-i));
+  // Build array of 7 days starting from TODAY
+  const days = [];
+  for(let i=0;i<7;i++){
+    const d = DS[(hojeIdx+i)%7];
+    const dt = new Date(base); dt.setDate(dt.getDate()+i);
+    days.push({...d, dt, isToday:i===0});
+  }
+  document.getElementById('strip').innerHTML = days.map(d=>{
     const ok = prog[d.k]===true;
-    return `<div class="dpill ${d.k===hoje?'today':''} ${d.k===selDia?'sel':''}" onclick="mudar('${d.k}')">
-      <small>${d.l}</small><span>${dt.getDate()}</span>${ok?'<span class=\'dot\'></span>':''}
+    return `<div class="dpill ${d.isToday?'today':''} ${d.k===selDia?'sel':''}" onclick="mudar('${d.k}')">
+      <small>${d.l}</small><span>${d.dt.getDate()}</span>${ok?'<span class=\'dot\'></span>':''}
     </div>`;
   }).join('');
 }
@@ -644,7 +981,7 @@ function workout(){
     </button></div>`;
 }
 
-const LOCAL_EX_DB = {"agachamento livre": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "agachamento smith": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Machine_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Smith_Machine_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "leg press": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Calf_Press_On_The_Leg_Press_Machine/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Calf_Press_On_The_Leg_Press_Machine/1.jpg", "muscles": ["panturrilha"]}, "cadeira extensora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/1.jpg", "muscles": ["quadríceps"]}, "mesa flexora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/1.jpg", "muscles": ["posterior"]}, "cadeira flexora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/1.jpg", "muscles": ["posterior"]}, "elevação pélvica": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/1.jpg", "muscles": ["glúteos", "panturrilha", "posterior"]}, "afundo": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "panturrilha": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rocking_Standing_Calf_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Rocking_Standing_Calf_Raise/1.jpg", "muscles": ["panturrilha"]}, "supino reto com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "supino reto com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Bench_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Bench_Press/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "crucifixo reto": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Flyes/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Flyes/1.jpg", "muscles": ["peitoral"]}, "puxada frente": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/1.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "remada curvada com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "remada sentada": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "desenvolvimento com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/1.jpg", "muscles": ["deltóide", "peitoral", "tríceps"]}, "desenvolvimento com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/1.jpg", "muscles": ["deltóide", "tríceps"]}, "elevação lateral": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Side_Lateral_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Side_Lateral_Raise/1.jpg", "muscles": ["deltóide"]}, "elevação frontal": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/1.jpg", "muscles": ["deltóide"]}, "rosca direta com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca direta com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca alternada": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Alternate_Bicep_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca martelo": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hammer_Curls_-_Rope_Attachment/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Hammer_Curls_-_Rope_Attachment/1.jpg", "muscles": ["bíceps"]}, "rosca scott": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Preacher_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Preacher_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "abdominal supra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/1.jpg", "muscles": ["abdômen"]}, "abdominal infra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/1.jpg", "muscles": ["abdômen"]}, "prancha": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/1.jpg", "muscles": ["abdômen"]}, "stiff com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/1.jpg", "muscles": ["posterior", "panturrilha", "glúteos"]}, "hiperextensão lombar": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/1.jpg", "muscles": ["lombar", "glúteos", "posterior"]}, "remada unilateral": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "agachamento com salto": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Freehand_Jump_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Freehand_Jump_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "mountain climber": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/1.jpg", "muscles": ["quadríceps", "peitoral", "posterior"]}};
+const LOCAL_EX_DB = {"agachamento livre": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Full_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "agachamento smith": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "leg press": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "leg press 45°": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Press/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "cadeira extensora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/1.jpg", "muscles": ["quadríceps"]}, "mesa flexora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/1.jpg", "muscles": ["posterior"]}, "cadeira flexora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Leg_Curl/1.jpg", "muscles": ["posterior"]}, "cadeira abdutora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/1.jpg", "muscles": ["abdutores", "glúteos"]}, "cadeira adutora": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/1.jpg", "muscles": ["adutores", "glúteos", "posterior"]}, "elevação pélvica": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/1.jpg", "muscles": ["glúteos", "panturrilha", "posterior"]}, "afundo": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "afundo (avanço)": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Lunge/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "panturrilha em pé": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/1.jpg", "muscles": ["panturrilha"]}, "panturrilha sentado": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Seated_Calf_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Seated_Calf_Raise/1.jpg", "muscles": ["panturrilha"]}, "supino reto com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "supino reto com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "supino na máquina": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Chest_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Chest_Press/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "crucifixo reto": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Flyes/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Flyes/1.jpg", "muscles": ["peitoral"]}, "crossover (polia)": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/1.jpg", "muscles": ["peitoral", "deltóide"]}, "flexão de braço": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Clock_Push-Up/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Clock_Push-Up/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "puxada frente (puxador)": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/1.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "puxada por trás": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Front_Lat_Pulldown/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Close-Grip_Front_Lat_Pulldown/1.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "remada curvada com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Two-Dumbbell_Row/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Two-Dumbbell_Row/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "remada sentada (máquina)": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "remada unilateral": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "pullover": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_One-Arm_Triceps_Extension/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_One-Arm_Triceps_Extension/1.jpg", "muscles": ["tríceps"]}, "hiperextensão lombar": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hyperextensions_Back_Extensions/1.jpg", "muscles": ["lombar", "glúteos", "posterior"]}, "barra fixa": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pullups/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pullups/1.jpg", "muscles": ["dorsal", "bíceps", "costas"]}, "desenvolvimento com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/1.jpg", "muscles": ["deltóide", "peitoral", "tríceps"]}, "desenvolvimento com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/1.jpg", "muscles": ["deltóide", "tríceps"]}, "desenvolvimento de ombro": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/1.jpg", "muscles": ["deltóide", "tríceps"]}, "desenvolvimento na máquina": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Shoulder_Military_Press/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Shoulder_Military_Press/1.jpg", "muscles": ["deltóide", "tríceps"]}, "elevação lateral": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/1.jpg", "muscles": ["deltóide"]}, "elevação frontal": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Front_Dumbbell_Raise/1.jpg", "muscles": ["deltóide"]}, "crucifixo inverso": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Flyes/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Flyes/1.jpg", "muscles": ["deltóide"]}, "encolhimento de ombros": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shrug/1.jpg", "muscles": ["trapézio"]}, "rosca direta com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca direta com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca alternada": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Hammer_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Hammer_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca scott": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Preacher_Curls/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Preacher_Curls/1.jpg", "muscles": ["bíceps"]}, "rosca concentrada": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Concentration_Curls/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Concentration_Curls/1.jpg", "muscles": ["bíceps", "antebraço"]}, "rosca martelo": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Hammer_Curl/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Alternate_Hammer_Curl/1.jpg", "muscles": ["bíceps", "antebraço"]}, "tríceps corda": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown/1.jpg", "muscles": ["tríceps"]}, "abdominal supra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/1.jpg", "muscles": ["abdômen"]}, "abdominal infra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/1.jpg", "muscles": ["abdômen"]}, "prancha": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/1.jpg", "muscles": ["abdômen"]}, "abdominal oblíquo": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Oblique_Crunches/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Oblique_Crunches/1.jpg", "muscles": ["abdômen"]}, "abdominal na máquina": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Ab_Crunch_Machine/1.jpg", "muscles": ["abdômen"]}, "mountain climber": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Mountain_Climbers/1.jpg", "muscles": ["quadríceps", "peitoral", "posterior"]}, "stiff com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/1.jpg", "muscles": ["posterior", "panturrilha", "glúteos"]}, "stiff com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/1.jpg", "muscles": ["posterior", "panturrilha", "glúteos"]}, "agachamento sumô": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Band_Sumo_Deadlift/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Band_Sumo_Deadlift/1.jpg", "muscles": ["posterior", "abdutores", "adutores"]}, "supino inclinado com halteres": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Incline_Bench_Press_-_Medium_Grip/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Incline_Bench_Press_-_Medium_Grip/1.jpg", "muscles": ["peitoral", "deltóide", "tríceps"]}, "remada curvada com barra": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/1.jpg", "muscles": ["costas", "bíceps", "dorsal"]}, "tríceps testa": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/EZ-Bar_Skullcrusher/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/EZ-Bar_Skullcrusher/1.jpg", "muscles": ["tríceps", "antebraço"]}, "tríceps francês": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/1.jpg", "muscles": ["tríceps"]}, "mergulho (paralela)": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Triceps_Version/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Triceps_Version/1.jpg", "muscles": ["tríceps", "peitoral", "deltóide"]}, "agachamento com salto": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Freehand_Jump_Squat/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Freehand_Jump_Squat/1.jpg", "muscles": ["quadríceps", "panturrilha", "glúteos"]}, "crucifixo inclinado": {"img0": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Flyes/0.jpg", "img1": "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Dumbbell_Flyes/1.jpg", "muscles": ["peitoral"]}};
 
 async function abrir(i){
   const e = stuAtual.treinos[selDia].ex[i];
@@ -659,17 +996,21 @@ async function abrir(i){
   document.getElementById('ov').classList.add('on');
   workout(); strip();
 
-  // Look up exercise in local DB (case-insensitive partial match)
+  // Look up exercise in local DB
   const nome = e.n.toLowerCase().trim();
   let found = null;
-  for(const [key, val] of Object.entries(LOCAL_EX_DB)){
-    if(nome.includes(key) || key.includes(nome)){ found = val; break; }
-  }
-  // also try word-by-word match
+  // 1. Exact match
+  found = LOCAL_EX_DB[nome] || null;
+  // 2. Key contains nome or nome contains key (but key must be at least 10 chars to avoid false positives)
   if(!found){
-    const words = nome.split(' ').filter(w=>w.length>3);
     for(const [key, val] of Object.entries(LOCAL_EX_DB)){
-      if(words.some(w=>key.includes(w))){ found=val; break; }
+      if(key.length >= 8 && (nome === key || nome.startsWith(key) || key.startsWith(nome))){ found=val; break; }
+    }
+  }
+  // 3. Fallback: nome contains key exactly (no substring of short words)
+  if(!found){
+    for(const [key, val] of Object.entries(LOCAL_EX_DB)){
+      if(key.length >= 10 && nome.includes(key)){ found=val; break; }
     }
   }
 
@@ -703,13 +1044,19 @@ function toggleCheck(i){
 
 // ===== STRIP + WORKOUT =====
 function strip(){
-  const hoje = DS[new Date().getDay()].k;
+  const hojeIdx = new Date().getDay(); // 0=sun,1=mon...
   const base = new Date(); base.setHours(0,0,0,0);
-  document.getElementById('strip').innerHTML = DS.map((d,i)=>{
-    const dt = new Date(base); dt.setDate(dt.getDate()-(DS.findIndex(x=>x.k===hoje)-i));
+  // Build array of 7 days starting from TODAY
+  const days = [];
+  for(let i=0;i<7;i++){
+    const d = DS[(hojeIdx+i)%7];
+    const dt = new Date(base); dt.setDate(dt.getDate()+i);
+    days.push({...d, dt, isToday:i===0});
+  }
+  document.getElementById('strip').innerHTML = days.map(d=>{
     const ok = prog[d.k]===true;
-    return `<div class="dpill ${d.k===hoje?'today':''} ${d.k===selDia?'sel':''}" onclick="mudar('${d.k}')">
-      <small>${d.l}</small><span>${dt.getDate()}</span>${ok?'<span class=\'dot\'></span>':''}
+    return `<div class="dpill ${d.isToday?'today':''} ${d.k===selDia?'sel':''}" onclick="mudar('${d.k}')">
+      <small>${d.l}</small><span>${d.dt.getDate()}</span>${ok?'<span class=\'dot\'></span>':''}
     </div>`;
   }).join('');
 }
@@ -759,9 +1106,13 @@ async function concluir(){
   tr.ex.forEach((_,i)=>{ prog[selDia][i]=true; });
   prog[selDia]=true;
   saveChecks();
-  // save to firestore
   const hoje = new Date().toLocaleDateString('pt-BR');
-  const hist = {dia:selDia,data:hoje,titulo:tr.titulo||DS.find(d=>d.k===selDia).l};
+  const hist = {
+    dia:selDia,
+    data:hoje,
+    titulo:tr.titulo||DS.find(d=>d.k===selDia).l,
+    exercicios:(tr.ex||[]).map(e=>e.n).filter(Boolean)
+  };
   try{
     await db.collection('users').doc(auth.currentUser.uid).update({
       hist: firebase.firestore.FieldValue.arrayUnion(hist)
@@ -777,20 +1128,43 @@ function switchTab(t){
     document.getElementById('nav'+x).classList.toggle('on',x===t);
   });
   if(t==='Hist') renderHist();
-  if(t==='Perf') document.getElementById('perfTotal').textContent = Object.values(prog).filter(v=>v===true).length+'';
+  if(t==='Perf') loadPerfTotal();
+}
+
+async function loadPerfTotal(){
+  try{
+    const doc = await db.collection('users').doc(auth.currentUser.uid).get();
+    const total = (doc.data().hist||[]).length;
+    document.getElementById('perfTotal').textContent = total;
+  }catch(e){}
 }
 
 async function renderHist(){
   const el = document.getElementById('histList');
   try{
     const doc = await db.collection('users').doc(auth.currentUser.uid).get();
-    const hist = (doc.data().hist||[]).reverse().slice(0,20);
+    const hist = (doc.data().hist||[]).reverse();
     if(!hist.length){ el.innerHTML='<p style="color:var(--gray);font-size:14px">Nenhum treino concluído ainda.</p>'; return; }
-    el.innerHTML = hist.map(h=>`<div class="hist-item">
-      <div class="hist-icon"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
-      <div class="hist-info"><b>${h.titulo||h.dia}</b><small>${h.data}</small></div>
-    </div>`).join('');
+    el.innerHTML = hist.map((h,i)=>`
+      <div class="hist-item" onclick="toggleHist(${i})" style="flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px;width:100%">
+          <div class="hist-icon"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
+          <div class="hist-info" style="flex:1"><b>${h.titulo||h.dia}</b><small>${h.data}</small></div>
+          <span style="color:var(--gray);font-size:18px" id="hArrow${i}">›</span>
+        </div>
+        <div id="hDetail${i}" style="display:none;padding-left:52px;width:100%">
+          ${(h.exercicios||[]).map(ex=>`<div style="font-size:13px;color:var(--gray);padding:3px 0;border-bottom:1px solid var(--line)">• ${ex}</div>`).join('')||'<span style="font-size:12px;color:var(--gray)">Sem detalhes</span>'}
+        </div>
+      </div>`).join('');
   }catch(e){ el.innerHTML='<p style="color:#e55;font-size:13px">Erro ao carregar histórico.</p>'; }
+}
+
+function toggleHist(i){
+  const detail = document.getElementById('hDetail'+i);
+  const arrow = document.getElementById('hArrow'+i);
+  const open = detail.style.display==='block';
+  detail.style.display = open ? 'none' : 'block';
+  arrow.textContent = open ? '›' : '∨';
 }
 
 function logout(){
