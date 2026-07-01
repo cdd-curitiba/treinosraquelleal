@@ -50,11 +50,11 @@ img{display:block;max-width:100%;}
 
 /* ADMIN LOGIN */
 #sAdmLogin{align-items:center;justify-content:center;padding:32px 24px;background:radial-gradient(circle at 50% 15%, rgba(241,90,36,.18), transparent 55%),#0a0a0a;}
-.admbox{width:100%;max-width:360px;}
-.admbox img{height:36px;margin-bottom:20px;}
-.admbox h2{font-size:22px;text-transform:uppercase;margin-bottom:6px;}
-.admbox p{color:var(--gray);font-size:13px;margin:0 0 18px;}
-.admbox .inp{margin-bottom:10px;}
+.admbox{width:100%;max-width:360px;text-align:center;}
+.admbox img{height:42px;margin:0 auto 26px;}
+.admbox h2{font-size:28px;text-transform:uppercase;margin-bottom:6px;}
+.admbox p{color:var(--gray);font-size:14px;margin:0 0 24px;line-height:1.5;}
+.admbox .inp{margin-bottom:10px;text-align:left;}
 .errmsg{color:#e55;font-size:12.5px;min-height:18px;margin-bottom:8px;}
 
 /* ADMIN PANEL */
@@ -568,8 +568,8 @@ async function renderRanking(){
     const alunos=[];
     snap.forEach(doc=>{
       const a=doc.data();
-      const total=(a.hist||[]).length;
-      alunos.push({nome:a.nome,total,uid:doc.id});
+      const hist=a.hist||[];
+      alunos.push({nome:a.nome,total:hist.length,hist,uid:doc.id});
     });
     alunos.sort((a,b)=>b.total-a.total);
     const max=alunos[0]?.total||1;
@@ -577,16 +577,33 @@ async function renderRanking(){
     el.innerHTML=alunos.map((a,i)=>{
       const cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
       const pct=Math.round((a.total/max)*100);
-      return`<div class="rank-card">
-        <div class="rank-pos ${cls}">${i+1}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:700">${a.nome}</div>
-          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
-          <div style="font-size:11px;color:var(--gray);margin-top:3px">${a.total} treino${a.total!==1?'s':''} concluído${a.total!==1?'s':''}</div>
+      const treinos=[...a.hist].reverse().map(h=>`
+        <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--line)">
+          <span>${h.titulo||h.dia}</span>
+          <span style="color:var(--gray);font-size:11px;white-space:nowrap">${h.data||''}</span>
+        </div>`).join('') || '<span style="font-size:12px;color:var(--gray)">Sem treinos concluídos ainda.</span>';
+      return`<div class="rank-card" onclick="toggleRank(${i})" style="cursor:pointer;flex-direction:column;align-items:stretch;gap:0">
+        <div style="display:flex;align-items:center;gap:12px;width:100%">
+          <div class="rank-pos ${cls}">${i+1}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700">${a.nome}</div>
+            <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+            <div style="font-size:11px;color:var(--gray);margin-top:3px">${a.total} treino${a.total!==1?'s':''} concluído${a.total!==1?'s':''}</div>
+          </div>
+          <span style="color:var(--gray);font-size:18px" id="rArrow${i}">›</span>
         </div>
+        <div id="rDetail${i}" style="display:none;padding:8px 0 2px 52px">${treinos}</div>
       </div>`;
     }).join('');
   }catch(e){el.innerHTML='<p style="color:#e55;font-size:13px">Erro: '+e.message+'</p>';}
+}
+
+function toggleRank(i){
+  const detail=document.getElementById('rDetail'+i);
+  const arrow=document.getElementById('rArrow'+i);
+  const open=detail.style.display==='block';
+  detail.style.display=open?'none':'block';
+  if(arrow) arrow.textContent=open?'›':'∨';
 }
 
 async function renderModelos(){
@@ -898,20 +915,26 @@ async function renderModelSelector(){
 
 async function aplicarModeloEditor(modeloId){
   if(!modeloId) return;
-  if(!confirm('Substituir o treino atual pelo modelo? Esta ação não pode ser desfeita até salvar.')) return;
-  const mDoc = await db.collection('modelos').doc(modeloId).get();
-  editData = {...(mDoc.data().treinos||{})};
-  // pega os dias que o modelo realmente preencheu com treino
-  const diasComTreino = Object.keys(editData).filter(k => editData[k] && !editData[k].rest && editData[k].ex && editData[k].ex.length);
-  if(!diasComTreino.length){
-    alert('Esse modelo ainda não tem nenhum exercício salvo. Edite o modelo e adicione os treinos antes de aplicar.');
-  } else if(!diasComTreino.includes(editDia)){
-    // dia atual não tem nada no modelo -> pula pro primeiro dia que tem
-    editDia = diasComTreino[0];
-  }
-  renderDayTabs(); renderDayEditor();
-  // reset select
   const sel = document.querySelector('#modelBar select');
+  const mDoc = await db.collection('modelos').doc(modeloId).get();
+  const treinosModelo = (mDoc.data()||{}).treinos || {};
+  // pega o primeiro dia do modelo que realmente tem exercícios cadastrados
+  const diaModelo = Object.keys(treinosModelo).find(k => treinosModelo[k] && !treinosModelo[k].rest && treinosModelo[k].ex && treinosModelo[k].ex.length);
+  if(!diaModelo){
+    alert('Esse modelo ainda não tem nenhum exercício salvo. Edite o modelo e adicione os treinos antes de aplicar.');
+    if(sel) sel.value = '';
+    return;
+  }
+  const nomeDia = DS.find(d=>d.k===editDia).l;
+  const nomeModelo = mDoc.data().nome || 'modelo';
+  if(!confirm(`Substituir o treino de ${nomeDia} pelo modelo "${nomeModelo}"? Esta ação não pode ser desfeita até salvar.`)){
+    if(sel) sel.value = '';
+    return;
+  }
+  const conteudo = treinosModelo[diaModelo];
+  // aplica só no dia atualmente selecionado, sem mexer nos outros dias
+  editData[editDia] = { titulo: conteudo.titulo||'', rest:false, ex: JSON.parse(JSON.stringify(conteudo.ex||[])) };
+  renderDayTabs(); renderDayEditor();
   if(sel) sel.value = '';
 }
 
@@ -930,7 +953,13 @@ function renderDayTabs(){
 function renderDayEditor(){
   const tr = editData[editDia] || {titulo:'',rest:false,ex:[]};
   const isRest = tr.rest||false;
-  let html = `<div class="rest-toggle"><input type="checkbox" id="restChk" ${isRest?'checked':''} onchange="toggleRest(this.checked)"><label for="restChk">Dia de descanso</label></div>`;
+  const temTreino = !isRest && tr.ex && tr.ex.length;
+  let html = `<div class="rest-toggle" style="justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="checkbox" id="restChk" ${isRest?'checked':''} onchange="toggleRest(this.checked)"><label for="restChk">Dia de descanso</label>
+    </div>
+    ${temTreino?`<button onclick="limparTreinoDia()" style="background:rgba(229,85,85,.12);color:#e55;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer">🗑 Limpar treino do dia</button>`:''}
+  </div>`;
   if(!isRest){
     html += `<input class="inp day-title-inp" id="dtitle" placeholder="Nome do treino (ex: Treino A · Inferiores)" value="${(tr.titulo||'').replace(/"/g,'&quot;')}">`;
     const exs = tr.ex||[];
@@ -954,6 +983,13 @@ function renderDayEditor(){
     html += `<button class="add-ex" onclick="addEx()">+ Adicionar exercício</button>`;
   }
   document.getElementById('editBody').innerHTML = html;
+}
+
+function limparTreinoDia(){
+  const nomeDia = DS.find(d=>d.k===editDia).l;
+  if(!confirm(`Excluir todo o treino de ${nomeDia}? Esta ação não pode ser desfeita até salvar.`)) return;
+  editData[editDia] = {titulo:'',rest:false,ex:[]};
+  renderDayEditor();
 }
 
 function exPreviewHtml(i){
